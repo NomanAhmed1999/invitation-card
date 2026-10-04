@@ -22,12 +22,24 @@
   const countMinutes = document.getElementById("countMinutes");
   const countSeconds = document.getElementById("countSeconds");
 
+  // Loader and sound hint elements
+  const invitationLoader = document.getElementById("invitationLoader");
+  const loaderBar = document.getElementById("loaderBar");
+  const loaderPercent = document.getElementById("loaderPercent");
+  const loaderSub = document.getElementById("loaderSub");
+  const tapHint = document.getElementById("tapHint");
+  const soundPill = document.getElementById("soundPill");
+
   // October 23, 2026 · 08:00 PM local time
   const EVENT_DATE = new Date(2026, 9, 23, 20, 0, 0);
 
   let opened = false;
+  let videoReady = false;
+  let userInteracted = false;
+  let tapHintShown = false;
   let scratchReady = false;
   let countdownTimer = null;
+  let videoBlobUrl = null;
 
   function showOverlay(screen) {
     [startScreen, videoScreen].forEach((el) => {
@@ -41,37 +53,170 @@
     });
   }
 
+  function updateLoaderProgress(pct, statusText) {
+    const clamped = Math.max(0, Math.min(100, Math.round(pct)));
+    if (loaderBar) loaderBar.style.width = clamped + "%";
+    if (loaderPercent) loaderPercent.textContent = clamped + "%";
+    if (statusText && loaderSub) {
+      loaderSub.textContent = statusText;
+    }
+  }
+
   async function startBackgroundMusic() {
     try {
       bgMusic.loop = true;
       bgMusic.volume = 0.85;
-      bgMusic.currentTime = 0;
-      await bgMusic.play();
+      try {
+        if (bgMusic.currentTime > 0) bgMusic.currentTime = 0;
+      } catch (_) {}
+      const playPromise = bgMusic.play();
+      if (playPromise !== undefined) {
+        await playPromise;
+      }
+      if (soundPill) soundPill.setAttribute("hidden", "");
+      return true;
     } catch (err) {
-      console.warn("Background music could not start:", err);
+      console.warn("Background music could not autoplay:", err);
+      if (soundPill) soundPill.removeAttribute("hidden");
+      return false;
+    }
+  }
+
+  function enableAudioOnInteraction() {
+    if (bgMusic.paused) {
+      bgMusic.play().then(() => {
+        if (soundPill) soundPill.setAttribute("hidden", "");
+      }).catch(() => {});
+    }
+  }
+
+  if (soundPill) {
+    soundPill.addEventListener("click", (e) => {
+      e.stopPropagation();
+      enableAudioOnInteraction();
+    });
+  }
+
+  function showTapToOpen() {
+    if (tapHintShown || opened) return;
+    tapHintShown = true;
+    videoReady = true;
+
+    // Smoothly fade out the loader
+    if (invitationLoader) {
+      invitationLoader.classList.add("is-hidden");
+      setTimeout(() => {
+        invitationLoader.setAttribute("hidden", "");
+      }, 400);
+    }
+
+    // Reveal the "Tap To Open" indicator
+    if (tapHint) {
+      tapHint.removeAttribute("hidden");
+      requestAnimationFrame(() => {
+        tapHint.classList.add("is-visible");
+      });
     }
   }
 
   async function openInvitation() {
-    if (opened) return;
+    if (opened || !videoReady) return;
     opened = true;
 
-    startScreen.classList.add("is-leaving");
-    showOverlay(videoScreen);
+    // Show video screen
+    videoScreen.removeAttribute("hidden");
+    videoScreen.classList.add("is-active");
 
-    // Start background song on the user tap gesture; keep it for the whole visit
+    // Fade out start screen gracefully
+    startScreen.classList.add("is-leaving");
+    startScreen.classList.remove("is-active");
+    setTimeout(() => {
+      startScreen.setAttribute("hidden", "");
+    }, 450);
+
+    // Start background song immediately from user tap
     startBackgroundMusic();
 
     try {
       video.muted = true;
       video.defaultMuted = true;
       video.volume = 0;
-      video.currentTime = 0;
+      try {
+        video.currentTime = 0;
+      } catch (_) {}
       video.controls = false;
-      await video.play();
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        await playPromise;
+      }
     } catch (err) {
       console.warn("Video playback could not start:", err);
     }
+  }
+
+  function prepareVideoPlayback(resolve) {
+    let resolved = false;
+    const done = () => {
+      if (resolved) return;
+      resolved = true;
+      video.removeEventListener("canplaythrough", done);
+      video.removeEventListener("canplay", done);
+      video.removeEventListener("loadeddata", done);
+      updateLoaderProgress(100, "Invitation ready!");
+      resolve();
+    };
+
+    video.addEventListener("canplaythrough", done, { once: true });
+    video.addEventListener("canplay", done, { once: true });
+    video.addEventListener("loadeddata", done, { once: true });
+    setTimeout(done, 2000);
+    video.load();
+  }
+
+  function fallbackDirectLoad(videoUrl, resolve) {
+    video.src = videoUrl;
+    prepareVideoPlayback(resolve);
+  }
+
+  function loadVideoMedia(videoUrl) {
+    return new Promise((resolve) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open("GET", videoUrl, true);
+      xhr.responseType = "blob";
+
+      xhr.onprogress = (event) => {
+        let pct = 0;
+        if (event.lengthComputable && event.total > 0) {
+          pct = (event.loaded / event.total) * 100;
+        } else {
+          const expected = 7429785;
+          pct = Math.min(98, (event.loaded / expected) * 100);
+        }
+        updateLoaderProgress(pct, "Preparing video experience...");
+      };
+
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300 && xhr.response) {
+          try {
+            videoBlobUrl = URL.createObjectURL(xhr.response);
+            video.src = videoBlobUrl;
+            prepareVideoPlayback(resolve);
+          } catch (err) {
+            console.warn("Blob URL creation failed, fallback to direct src:", err);
+            fallbackDirectLoad(videoUrl, resolve);
+          }
+        } else {
+          fallbackDirectLoad(videoUrl, resolve);
+        }
+      };
+
+      xhr.onerror = () => {
+        console.warn("XHR preload error, fallback to direct src");
+        fallbackDirectLoad(videoUrl, resolve);
+      };
+
+      xhr.send();
+    });
   }
 
   function observeInView(element) {
@@ -401,23 +546,52 @@
     frameId = requestAnimationFrame(frame);
   }
 
-  stage.addEventListener(
-    "pointerup",
-    (event) => {
-      if (opened) return;
-      if (typeof event.button === "number" && event.button !== 0) return;
-      openInvitation();
-    },
-    { passive: true }
-  );
+  function handleInitialUserGesture(event) {
+    if (event && typeof event.button === "number" && event.button !== 0) return;
+    userInteracted = true;
 
-  stage.addEventListener("keydown", (event) => {
-    if (opened) return;
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
+    if (!videoReady) {
+      return;
+    }
+
+    if (!opened) {
       openInvitation();
     }
+  }
+
+  if (tapHint) {
+    tapHint.addEventListener("click", (e) => {
+      e.stopPropagation();
+      handleInitialUserGesture(e);
+    });
+    tapHint.addEventListener("pointerup", (e) => {
+      e.stopPropagation();
+      handleInitialUserGesture(e);
+    });
+  }
+
+  if (startScreen) {
+    startScreen.addEventListener("pointerup", handleInitialUserGesture);
+    startScreen.addEventListener("click", handleInitialUserGesture);
+  }
+
+  stage.addEventListener("pointerup", handleInitialUserGesture);
+  stage.addEventListener("click", handleInitialUserGesture);
+
+  stage.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      handleInitialUserGesture(event);
+    }
   });
+
+  // Global listener: any click/tap on document ensures audio starts if previously blocked
+  document.addEventListener("pointerdown", () => {
+    userInteracted = true;
+    if (opened && bgMusic.paused) {
+      enableAudioOnInteraction();
+    }
+  }, { passive: true });
 
   stage.setAttribute("tabindex", "0");
 
@@ -426,13 +600,46 @@
     celebration.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
-  video.addEventListener("ended", showEnd);
+  // Ensure seamless, uninterrupted video playback
+  video.addEventListener("waiting", () => {
+    video.play().catch(() => {});
+  });
+  video.addEventListener("stalled", () => {
+    video.play().catch(() => {});
+  });
+
+  let videoEnded = false;
+  function triggerVideoEnd() {
+    if (videoEnded) return;
+    videoEnded = true;
+    showEnd();
+  }
+
+  video.addEventListener("ended", triggerVideoEnd);
+  video.addEventListener("timeupdate", () => {
+    if (video.duration && video.currentTime >= video.duration - 0.25) {
+      triggerVideoEnd();
+    }
+  });
 
   video.muted = true;
   video.defaultMuted = true;
   video.volume = 0;
   video.controls = false;
   video.removeAttribute("controls");
+
+  // Pre-buffer background music
+  try {
+    bgMusic.load();
+  } catch (_) {}
+
+  // Preload video completely; when loaded, show the Tap to Open indicator
+  loadVideoMedia("assets/invitation-card.mp4").then(() => {
+    updateLoaderProgress(100, "Invitation ready!");
+    setTimeout(() => {
+      showTapToOpen();
+    }, 350);
+  });
 
   // Keep background music going even if the tab briefly pauses playback
   document.addEventListener("visibilitychange", () => {

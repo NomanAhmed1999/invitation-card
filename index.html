@@ -15,9 +15,27 @@
     <section class="screen screen--start is-active" id="startScreen" aria-label="Invitation cover">
       <img class="screen__media" src="assets/start-image.svg" alt="Invitation cover" draggable="false" />
       <div class="start-dim" aria-hidden="true"></div>
-      <div class="tap-hint" id="tapHint">
+
+      <!-- Luxury Wedding Loader -->
+      <div class="invitation-loader" id="invitationLoader" aria-live="polite">
+        <div class="loader-spinner" aria-hidden="true">
+          <div class="loader-spinner__circle"></div>
+          <div class="loader-spinner__pulse"></div>
+          <span class="loader-spinner__star">✦</span>
+        </div>
+        <p class="loader-title" id="loaderTitle">Loading Invitation</p>
+        <div class="loader-track">
+          <div class="loader-bar" id="loaderBar" style="width: 0%"></div>
+        </div>
+        <div class="loader-meta">
+          <span class="loader-percent" id="loaderPercent">0%</span>
+          <span class="loader-sub" id="loaderSub">Preparing video experience...</span>
+        </div>
+      </div>
+
+      <div class="tap-hint" id="tapHint" role="button" tabindex="0" aria-label="Tap to open invitation" hidden>
         <span class="tap-hint__ring" aria-hidden="true"></span>
-        <span class="tap-hint__label">Tap To Open</span>
+        <span class="tap-hint__label" id="tapHintLabel">Tap To Open</span>
       </div>
     </section>
 
@@ -26,7 +44,6 @@
       <video
         id="inviteVideo"
         class="screen__media screen__media--video"
-        src="assets/invitation-card.mp4"
         muted
         playsinline
         webkit-playsinline
@@ -34,6 +51,10 @@
         disablepictureinpicture
         controlslist="nodownload nofullscreen noremoteplayback"
       ></video>
+      <button class="sound-pill" id="soundPill" aria-label="Enable music" hidden>
+        <span class="sound-pill__icon" aria-hidden="true">♫</span>
+        <span class="sound-pill__label">Tap for sound</span>
+      </button>
     </section>
 
     <audio
