@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Wedding Invitation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Great+Vibes&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="stage" id="stage">
+    <!-- Start screen -->
+    <section class="screen screen--start is-active" id="startScreen" aria-label="Invitation cover">
+      <img class="screen__media" src="assets/start-image.svg" alt="Invitation cover" draggable="false" />
+      <div class="start-dim" aria-hidden="true"></div>
+      <div class="tap-hint" id="tapHint">
+        <span class="tap-hint__ring" aria-hidden="true"></span>
+        <span class="tap-hint__label">Tap To Open</span>
+      </div>
+    </section>
+
+    <!-- Video screen -->
+    <section class="screen screen--video" id="videoScreen" aria-label="Invitation video" hidden>
+      <video
+        id="inviteVideo"
+        class="screen__media screen__media--video"
+        src="assets/invitation-card.mp4"
+        muted
+        playsinline
+        webkit-playsinline
+        preload="auto"
+        disablepictureinpicture
+        controlslist="nodownload nofullscreen noremoteplayback"
+      ></video>
+    </section>
+
+    <audio
+      id="bgMusic"
+      src="assets/bismillah.m4a"
+      loop
+      preload="auto"
+      playsinline
+    ></audio>
+
+    <!-- End + details (scrollable after video) -->
+    <div class="finale" id="finale" hidden>
+      <section class="screen screen--end is-active" id="endScreen" aria-label="Invitation closing">
+        <img class="screen__media" src="assets/end-image.svg" alt="Invitation closing card" draggable="false" />
+        <a class="scroll-hint" id="scrollHint" href="#celebration" aria-label="Scroll down">
+          <span class="scroll-hint__label">Scroll Down</span>
+          <span class="scroll-hint__chevron" aria-hidden="true">
+            <span></span>
+            <span></span>
+          </span>
+        </a>
+      </section>
+
+      <section class="celebration" id="celebration" aria-label="Celebration message">
+        <div class="celebration__ornament" aria-hidden="true">
+          <span class="celebration__line"></span>
+          <span class="celebration__diamond"></span>
+          <span class="celebration__line"></span>
+        </div>
+        <h2 class="celebration__heading">A Joyful Celebration</h2>
+        <p class="celebration__description">
+          With hearts full of gratitude, we warmly invite you to join us as we celebrate this beautiful beginning with the love, prayers, and blessings of our families.
+        </p>
+        <div class="celebration__ornament celebration__ornament--bottom" aria-hidden="true">
+          <span class="celebration__line"></span>
+          <span class="celebration__diamond"></span>
+          <span class="celebration__line"></span>
+        </div>
+      </section>
+
+      <section class="reveal" id="reveal" aria-label="Scratch to reveal invitation details">
+        <div class="celebration__ornament" aria-hidden="true">
+          <span class="celebration__line"></span>
+          <span class="celebration__diamond"></span>
+          <span class="celebration__line"></span>
+        </div>
+        <h2 class="reveal__heading">Scratch to Reveal</h2>
+        <p class="reveal__prompt">Swipe across the foil to uncover the celebration date</p>
+
+        <div class="scratch" id="scratchCard">
+          <div class="scratch__frame">
+            <div class="scratch__content" id="scratchContent" aria-hidden="true">
+              <p class="scratch__invite">You’re Invited!</p>
+              <p class="scratch__date">October 23, 2026</p>
+              <p class="scratch__meta">Friday ⬩ 08:00 PM</p>
+            </div>
+            <canvas class="scratch__canvas" id="scratchCanvas" aria-label="Scratch foil"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <section class="countdown" id="countdown" aria-label="Countdown until the Barat">
+        <div class="celebration__ornament" aria-hidden="true">
+          <span class="celebration__line"></span>
+          <span class="celebration__diamond"></span>
+          <span class="celebration__line"></span>
+        </div>
+        <h2 class="countdown__heading">Until the Barat arrives</h2>
+        <p class="countdown__subtitle">Counting every heartbeat</p>
+
+        <div class="countdown__grid" aria-live="polite">
+          <div class="countdown__unit">
+            <span class="countdown__value" id="countDays">00</span>
+            <span class="countdown__label">days</span>
+          </div>
+          <div class="countdown__unit">
+            <span class="countdown__value" id="countHours">00</span>
+            <span class="countdown__label">hours</span>
+          </div>
+          <div class="countdown__unit">
+            <span class="countdown__value" id="countMinutes">00</span>
+            <span class="countdown__label">minutes</span>
+          </div>
+          <div class="countdown__unit">
+            <span class="countdown__value" id="countSeconds">00</span>
+            <span class="countdown__label">seconds</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="venue" id="venue" aria-label="Banquet location">
+        <div class="celebration__ornament" aria-hidden="true">
+          <span class="celebration__line"></span>
+          <span class="celebration__diamond"></span>
+          <span class="celebration__line"></span>
+        </div>
+        <p class="venue__eyebrow">Banquet location</p>
+        <h2 class="venue__heading">The venue</h2>
+        <span class="venue__star" aria-hidden="true">✦</span>
+        <h3 class="venue__name">SKY DECK BANQUET</h3>
+        <p class="venue__address">
+          D-8, D-9, Block-D North Nazimabad<br />
+          Karachi Pakistan
+        </p>
+        <a
+          class="venue__map"
+          href="https://maps.app.goo.gl/8i2JVtNjMjGn4dP88"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          View on Google Maps
+        </a>
+      </section>
+
+      <section class="blessing" id="blessing" aria-label="Closing message">
+        <div class="celebration__ornament" aria-hidden="true">
+          <span class="celebration__line"></span>
+          <span class="celebration__diamond"></span>
+          <span class="celebration__line"></span>
+        </div>
+        <h2 class="blessing__heading">With all our hearts</h2>
+        <p class="blessing__lead">Your presence is our present</p>
+        <p class="blessing__message">
+          Your love, blessings, and presence are the greatest gifts we could ever ask for.
+        </p>
+        <div class="celebration__ornament celebration__ornament--bottom" aria-hidden="true">
+          <span class="celebration__line"></span>
+          <span class="celebration__diamond"></span>
+          <span class="celebration__line"></span>
+        </div>
+      </section>
+
+      <section class="finale-close" id="finaleClose" aria-label="Final invitation note">
+        <div class="celebration__ornament" aria-hidden="true">
+          <span class="celebration__line"></span>
+          <span class="celebration__diamond"></span>
+          <span class="celebration__line"></span>
+        </div>
+        <h2 class="finale-close__heading">We can't wait to celebrate with you.</h2>
+        <p class="finale-close__meta">October 23, 2026 · SKY DECK BANQUET</p>
+        <div class="celebration__ornament celebration__ornament--bottom" aria-hidden="true">
+          <span class="celebration__line"></span>
+          <span class="celebration__diamond"></span>
+          <span class="celebration__line"></span>
+        </div>
+      </section>
+
+      <canvas class="confetti" id="confettiCanvas" aria-hidden="true"></canvas>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
