@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Wedding Invitation</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Great+Vibes&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Great+Vibes&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
   <main class="stage" id="stage">
     <!-- Start screen -->
@@ -41,29 +45,15 @@
 
     <!-- Video screen -->
     <section class="screen screen--video" id="videoScreen" aria-label="Invitation video" hidden>
-      <video
-        id="inviteVideo"
-        class="screen__media screen__media--video"
-        muted
-        playsinline
-        webkit-playsinline
-        preload="auto"
-        disablepictureinpicture
-        controlslist="nodownload nofullscreen noremoteplayback"
-      ></video>
+      <video id="inviteVideo" class="screen__media screen__media--video" muted playsinline webkit-playsinline
+        preload="auto" disablepictureinpicture controlslist="nodownload nofullscreen noremoteplayback"></video>
       <button class="sound-pill" id="soundPill" aria-label="Enable music" hidden>
         <span class="sound-pill__icon" aria-hidden="true">♫</span>
         <span class="sound-pill__label">Tap for sound</span>
       </button>
     </section>
 
-    <audio
-      id="bgMusic"
-      src="assets/bismillah.m4a"
-      loop
-      preload="auto"
-      playsinline
-    ></audio>
+    <audio id="bgMusic" src="assets/bismillah.m4a" loop preload="auto" playsinline></audio>
 
     <!-- End + details (scrollable after video) -->
     <div class="finale" id="finale" hidden>
@@ -86,7 +76,8 @@
         </div>
         <h2 class="celebration__heading">A Joyful Celebration</h2>
         <p class="celebration__description">
-          With hearts full of gratitude, we warmly invite you to join us as we celebrate this beautiful beginning with the love, prayers, and blessings of our families.
+          With hearts full of gratitude, we warmly invite you to join us as we celebrate this beautiful beginning with
+          the love, prayers, and blessings of our families.
         </p>
         <div class="celebration__ornament celebration__ornament--bottom" aria-hidden="true">
           <span class="celebration__line"></span>
@@ -109,7 +100,7 @@
             <div class="scratch__content" id="scratchContent" aria-hidden="true">
               <p class="scratch__invite">You’re Invited!</p>
               <p class="scratch__date">October 23, 2026</p>
-              <p class="scratch__meta">Friday ⬩ 08:00 PM</p>
+              <p class="scratch__meta">Friday ⬩ 09:00 PM</p>
             </div>
             <canvas class="scratch__canvas" id="scratchCanvas" aria-label="Scratch foil"></canvas>
           </div>
@@ -154,17 +145,13 @@
         <p class="venue__eyebrow">Banquet location</p>
         <h2 class="venue__heading">The venue</h2>
         <span class="venue__star" aria-hidden="true">✦</span>
-        <h3 class="venue__name">SKY DECK BANQUET</h3>
+        <h3 class="venue__name">SKY DECK BANQUET &quot;A&quot;</h3>
         <p class="venue__address">
           D-8, D-9, Block-D North Nazimabad<br />
           Karachi Pakistan
         </p>
-        <a
-          class="venue__map"
-          href="https://maps.app.goo.gl/8i2JVtNjMjGn4dP88"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a class="venue__map" href="https://maps.app.goo.gl/8i2JVtNjMjGn4dP88" target="_blank"
+          rel="noopener noreferrer">
           View on Google Maps
         </a>
       </section>
@@ -194,7 +181,7 @@
           <span class="celebration__line"></span>
         </div>
         <h2 class="finale-close__heading">We can't wait to celebrate with you.</h2>
-        <p class="finale-close__meta">October 23, 2026 · SKY DECK BANQUET</p>
+        <p class="finale-close__meta">October 23, 2026 · SKY DECK BANQUET &quot;A&quot;</p>
         <div class="celebration__ornament celebration__ornament--bottom" aria-hidden="true">
           <span class="celebration__line"></span>
           <span class="celebration__diamond"></span>
@@ -204,8 +191,13 @@
 
       <canvas class="confetti" id="confettiCanvas" aria-hidden="true"></canvas>
     </div>
+    <div class="footer">
+      <p>Invitation Card Design By: NG-Innovate</p>
+      <p>Contact to develop: +92-3020295928</p>
+    </div>
   </main>
 
   <script src="script.js"></script>
 </body>
+
 </html>
