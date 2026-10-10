@@ -31,7 +31,7 @@
   const soundPill = document.getElementById("soundPill");
 
   // October 23, 2026 · 08:00 PM local time
-  const EVENT_DATE = new Date(2026, 9, 23, 20, 0, 0);
+  const EVENT_DATE = new Date(2026, 9, 16, 20, 0, 0);
 
   let opened = false;
   let videoReady = false;
@@ -634,7 +634,7 @@
   } catch (_) {}
 
   // Preload video completely; when loaded, show the Tap to Open indicator
-  loadVideoMedia("assets/invitation-card.mp4").then(() => {
+  loadVideoMedia("assets/invitation-card-backup-2.mp4").then(() => {
     updateLoaderProgress(100, "Invitation ready!");
     setTimeout(() => {
       showTapToOpen();
